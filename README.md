@@ -100,6 +100,40 @@ Steps:
         Once completed successfully on your phone, tap Reboot System.
 
 👥 Credits & Acknowledgements
+## 💻 For Developers: How to compile with working Decryption
+
+If you are a developer and want to compile this OrangeFox build with working decryption (asking for PIN/Pattern) for your specific software version, follow these steps:
+
+1. **Find your device's exact security patch date:**
+   Boot your phone to the system, enable USB Debugging, and run:
+   ```bash
+   adb shell getprop ro.build.version.security_patch
+
+(e.g., 2023-12-01)
+
+    Update BoardConfig.mk:
+    Open BoardConfig.mk and edit these lines with your actual Android version and security patch:
+    Makefile
+
+    PLATFORM_SECURITY_PATCH := <your_patch_date>
+    VENDOR_SECURITY_PATCH := <your_patch_date>
+    PLATFORM_VERSION := 13
+
+    # Enable FBE Decryption flags
+    TW_INCLUDE_CRYPTO := true
+    TW_INCLUDE_CRYPTO_FBE := true
+    TW_INCLUDE_FBE_METADATA_DECRYPT := true
+    BOARD_USES_METADATA_PARTITION := true
+    TW_USE_FSCRYPT_POLICY := 2
+
+    Update recovery.fstab:
+    Ensure your /data partition line contains the encryption flags:
+    Plaintext
+
+    /data  f2fs  /dev/block/by-name/userdata  flags=fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized;keydirectory=/metadata/vold/metadata_encryption
+
+
+
 
     OrangeFox Recovery Project for the base recovery.
 
